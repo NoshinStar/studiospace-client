@@ -1,27 +1,59 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@plugin "daisyui/theme" {
+  name: "studio-light";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #F7F8F4;
+  --color-base-200: #E9EEE6;
+  --color-base-300: #D6DDD2;
+  --color-base-content: #1B1612;
+  --color-primary: #C2410C;
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #14100D;
+  --color-secondary-content: #F7F8F4;
+  --radius-box: 1rem;
+  --radius-field: 0.75rem;
+}
+
+@plugin "daisyui/theme" {
+  name: "studio-dark";
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: #14100D;
+  --color-base-200: #1E1814;
+  --color-base-300: #2C241E;
+  --color-base-content: #ECE7E1;
+  --color-primary: #F97316;
+  --color-primary-content: #14100D;
+  --color-secondary: #ECE7E1;
+  --color-secondary-content: #14100D;
+  --radius-box: 1rem;
+  --radius-field: 0.75rem;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* সব section-এ একই heading style (requirement) */
+.section-title {
+  font-size: clamp(1.875rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.section-title em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-primary);
+}
+.eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0.7;
 }
