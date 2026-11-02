@@ -15,7 +15,9 @@ export default function StudioCard({ studio }: { studio: Studio }) {
           <h3 className="card-title text-lg line-clamp-1">{studio.title}</h3>
           <span className="badge badge-outline gap-1 shrink-0">
             <Star size={12} className="fill-current" />
-            {studio.rating > 0 ? studio.rating.toFixed(1) : "New"}
+            {(studio.rating ?? 0) > 0
+  ? (studio.rating ?? 0).toFixed(1)
+  : "New"}
           </span>
         </div>
         <p className="flex items-center gap-1 text-sm opacity-70 line-clamp-1">
