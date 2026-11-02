@@ -9,7 +9,9 @@ type Review = { name?: string; rating?: number; comment?: string };
 
 async function getStudio(id: string): Promise<Studio | null> {
   try {
-    const res = await fetch(`${API_URL}/api/studios/${id}`, { cache: "no-store" });
+    const res = await fetch(`${API_URL}/api/studios/${id}`, {
+      cache: "no-store",
+    });
     if (res.status === 404 || res.status === 400) return null;
     if (!res.ok) throw new Error("Failed to load");
     return res.json();
@@ -27,8 +29,14 @@ export default async function StudioDetailsPage({
   const studio = await getStudio(id);
   if (!studio) notFound();
 
-  const images = [studio.image, ...(studio.gallery ?? [])].filter(Boolean);
-  const reviews = ((studio as Studio & { reviews?: Review[] }).reviews ?? []) as Review[];
+  const images = [
+  studio.image,
+  ...(studio.images ?? []),
+  ...(studio.gallery ?? []),
+].filter((image): image is string => Boolean(image));
+
+const reviews = ((studio as Studio & { reviews?: Review[] }).reviews ??
+  []) as Review[];
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
@@ -40,7 +48,9 @@ export default async function StudioDetailsPage({
             <span className="badge badge-primary">{studio.category}</span>
             <span className="badge badge-outline gap-1">
               <Star size={12} className="fill-current" />
-              {studio.rating > 0 ? studio.rating.toFixed(1) : "New"}
+              {(studio.rating ?? 0) > 0
+  ? (studio.rating ?? 0).toFixed(1)
+  : "New"}
             </span>
           </div>
 
@@ -50,7 +60,9 @@ export default async function StudioDetailsPage({
           </p>
 
           <h2 className="text-xl font-bold mt-10 mb-3">About this space</h2>
-          <p className="leading-relaxed opacity-90 whitespace-pre-line">{studio.overview}</p>
+          <p className="leading-relaxed opacity-90 whitespace-pre-line">
+            {studio.overview}
+          </p>
 
           <h2 className="text-xl font-bold mt-10 mb-3">Amenities</h2>
           {studio.amenities?.length ? (
@@ -62,21 +74,27 @@ export default async function StudioDetailsPage({
               ))}
             </ul>
           ) : (
-            <p className="opacity-70">The host hasn&apos;t listed amenities yet.</p>
+            <p className="opacity-70">
+              The host hasn&apos;t listed amenities yet.
+            </p>
           )}
 
           <h2 className="text-xl font-bold mt-10 mb-3">Reviews</h2>
           {reviews.length === 0 ? (
             <div className="rounded-box bg-base-200 p-6 text-center">
               <p className="font-semibold">No reviews yet</p>
-              <p className="text-sm opacity-70 mt-1">Be the first to book and share your experience.</p>
+              <p className="text-sm opacity-70 mt-1">
+                Be the first to book and share your experience.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
               {reviews.map((r, i) => (
                 <div key={i} className="rounded-box bg-base-200 p-5">
                   <p className="font-semibold">{r.name ?? "Creator"}</p>
-                  {r.rating ? <p className="text-sm opacity-70">{r.rating} / 5</p> : null}
+                  {r.rating ? (
+                    <p className="text-sm opacity-70">{r.rating} / 5</p>
+                  ) : null}
                   <p className="mt-2">{r.comment}</p>
                 </div>
               ))}
@@ -88,17 +106,28 @@ export default async function StudioDetailsPage({
           <div className="card bg-base-200 shadow-md">
             <div className="card-body gap-4">
               <p className="text-3xl font-bold">
-                ${studio.hourlyRate} <span className="text-base font-normal opacity-70">/ hour</span>
+                ${studio.hourlyRate}{" "}
+                <span className="text-base font-normal opacity-70">/ hour</span>
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
-                  <Users size={16} className="text-primary" /> Up to {studio.maxCapacity} people
+                  <Users size={16} className="text-primary" /> Up to{" "}
+                  {studio.maxCapacity} people
                 </li>
                 <li className="flex items-center gap-2">
-                  <ShieldCheck size={16} className="text-primary" /> ${studio.securityDeposit} refundable deposit
+                  <ShieldCheck size={16} className="text-primary" /> $
+                  {studio.securityDeposit} refundable deposit
                 </li>
               </ul>
-              <BookButton studioId={studio._id} />
+              <BookButton
+                studio={{
+                  _id: studio._id,
+                  title: studio.title,
+                  hourlyRate: studio.hourlyRate,
+                  securityDeposit: studio.securityDeposit,
+                  ownerEmail: studio.ownerEmail,
+                }}
+              />
             </div>
           </div>
 
@@ -113,7 +142,9 @@ export default async function StudioDetailsPage({
                 </div>
                 <div className="min-w-0">
                   <p className="font-semibold truncate">{studio.ownerName}</p>
-                  <p className="text-sm opacity-70 truncate">{studio.ownerEmail}</p>
+                  <p className="text-sm opacity-70 truncate">
+                    {studio.ownerEmail}
+                  </p>
                 </div>
               </div>
             </div>
