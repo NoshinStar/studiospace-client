@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { API_URL } from "@/lib/constants";
+import { clientFetch } from "@/lib/api-client";
 
 type StudioInfo = {
   _id: string;
@@ -67,11 +68,8 @@ export default function BookButton({
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/bookings`, {
+      const response = await clientFetch("/api/bookings", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           studioId: studio._id,
           userEmail: session.user.email,

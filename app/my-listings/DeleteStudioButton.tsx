@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { API_URL } from "@/lib/constants";
+import { clientFetch } from "@/lib/api-client";
 
 export default function DeleteStudioButton({
   id,
@@ -22,7 +23,7 @@ export default function DeleteStudioButton({
     setDeleting(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/studios/${id}`, {
+      const res = await clientFetch(`/api/studios/${id}`, {
         method: "DELETE",
       });
 

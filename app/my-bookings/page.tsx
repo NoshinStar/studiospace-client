@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { API_URL } from "@/lib/constants";
+import { clientFetch } from "@/lib/api-client";
 import { fmt12, fmtDate } from "@/lib/format";
 import type { Booking } from "@/lib/types";
 import CancelBookingButton from "./CancelBookingButton";
@@ -20,19 +20,18 @@ export default async function MyBookingsPage() {
 
   let bookings: Booking[] = [];
 
-  try {
-    const response = await fetch(
-      `${API_URL}/api/my-bookings?email=${encodeURIComponent(session.user.email)}`,
-      { cache: "no-store" }
-    );
+try {
+  const response = await clientFetch("/api/my-bookings", {
+    cache: "no-store",
+  });
 
-    if (response.ok) {
-      const data = await response.json();
-      bookings = Array.isArray(data) ? data : data.bookings ?? [];
-    }
-  } catch (error) {
-    console.error("Failed to load bookings:", error);
+  if (response.ok) {
+    const data = await response.json();
+    bookings = Array.isArray(data) ? data : data.bookings ?? [];
   }
+} catch (error) {
+  console.error("Failed to load bookings:", error);
+}
 
   return (
     <main className="min-h-screen bg-base-200 px-4 py-12">
@@ -103,12 +102,12 @@ export default async function MyBookingsPage() {
                           Booking total
                         </p>
                         <p className="text-xl font-bold">
-                          ৳{booking.totalPrice}
+                          ${booking.totalPrice}
                         </p>
                       </div>
 
                       <p className="text-sm text-base-content/60">
-                        Deposit: ৳{booking.securityDeposit}
+                        Deposit: ${booking.securityDeposit}
                       </p>
 
                       {booking.status === "Pending" && (

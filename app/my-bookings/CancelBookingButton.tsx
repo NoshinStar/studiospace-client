@@ -1,10 +1,9 @@
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { API_URL } from "@/lib/constants";
+import { clientFetch } from "@/lib/api-client";
 
 export default function CancelBookingButton({
   bookingId,
@@ -21,16 +20,9 @@ export default function CancelBookingButton({
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/bookings/${bookingId}/cancel`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: userEmail }),
-        }
-      );
+      const response = await clientFetch(`/api/bookings/${bookingId}/cancel`, {
+        method: "PATCH",
+      });
 
       const result = await response.json();
 
@@ -43,7 +35,7 @@ export default function CancelBookingButton({
       router.refresh();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Something went wrong."
+        error instanceof Error ? error.message : "Something went wrong.",
       );
     } finally {
       setLoading(false);

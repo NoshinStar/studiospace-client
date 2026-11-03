@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { API_URL, AMENITIES, CATEGORIES } from "@/lib/constants";
+import { clientFetch } from "@/lib/api-client";
 
 export default function AddStudioForm() {
   const router = useRouter();
@@ -17,7 +18,9 @@ export default function AddStudioForm() {
   const [custom, setCustom] = useState("");
 
   const toggleAmenity = (a: string) =>
-    setAmenities((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
+    setAmenities((prev) =>
+      prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a],
+    );
 
   const addCustom = () => {
     const v = custom.trim();
@@ -39,7 +42,7 @@ export default function AddStudioForm() {
       fd.append("image", file);
       const res = await fetch(
         `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_KEY}`,
-        { method: "POST", body: fd }
+        { method: "POST", body: fd },
       );
       const json = await res.json();
       if (!json.success) throw new Error();
@@ -75,9 +78,8 @@ export default function AddStudioForm() {
 
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/studios`, {
+      const res = await clientFetch("/api/studios", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
@@ -99,37 +101,77 @@ export default function AddStudioForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="form-control sm:col-span-2">
             <span className="label-text mb-1">Studio title</span>
-            <input name="title" required placeholder="e.g. Pro Photography Suite" className={field} />
+            <input
+              name="title"
+              required
+              placeholder="e.g. Pro Photography Suite"
+              className={field}
+            />
           </label>
 
           <label className="form-control">
             <span className="label-text mb-1">Category</span>
-            <select name="category" required defaultValue="" className="select select-bordered w-full">
-              <option value="" disabled>Select a category</option>
+            <select
+              name="category"
+              required
+              defaultValue=""
+              className="select select-bordered w-full"
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
               {CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.value}</option>
+                <option key={c.value} value={c.value}>
+                  {c.value}
+                </option>
               ))}
             </select>
           </label>
 
           <label className="form-control">
             <span className="label-text mb-1">Location / address</span>
-            <input name="location" required placeholder="e.g. Gulshan, Dhaka" className={field} />
+            <input
+              name="location"
+              required
+              placeholder="e.g. Gulshan, Dhaka"
+              className={field}
+            />
           </label>
 
           <label className="form-control">
             <span className="label-text mb-1">Hourly rate ($)</span>
-            <input name="hourlyRate" type="number" min="1" required placeholder="49" className={field} />
+            <input
+              name="hourlyRate"
+              type="number"
+              min="1"
+              required
+              placeholder="49"
+              className={field}
+            />
           </label>
 
           <label className="form-control">
             <span className="label-text mb-1">Security deposit ($)</span>
-            <input name="securityDeposit" type="number" min="0" required placeholder="100" className={field} />
+            <input
+              name="securityDeposit"
+              type="number"
+              min="0"
+              required
+              placeholder="100"
+              className={field}
+            />
           </label>
 
           <label className="form-control">
             <span className="label-text mb-1">Max capacity (people)</span>
-            <input name="maxCapacity" type="number" min="1" required placeholder="10" className={field} />
+            <input
+              name="maxCapacity"
+              type="number"
+              min="1"
+              required
+              placeholder="10"
+              className={field}
+            />
           </label>
         </div>
 
@@ -143,14 +185,29 @@ export default function AddStudioForm() {
               placeholder="Paste an image URL"
               className={field}
             />
-            <label className={`btn btn-outline ${uploading ? "btn-disabled" : ""}`}>
-              {uploading ? <span className="loading loading-spinner loading-sm" /> : "Upload image"}
-              <input type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+            <label
+              className={`btn btn-outline ${uploading ? "btn-disabled" : ""}`}
+            >
+              {uploading ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                "Upload image"
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleUpload}
+                className="hidden"
+              />
             </label>
           </div>
           {image && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={image} alt="Studio preview" className="mt-2 w-full max-h-56 object-cover rounded-box" />
+            <img
+              src={image}
+              alt="Studio preview"
+              className="mt-2 w-full max-h-56 object-cover rounded-box"
+            />
           )}
         </div>
 
@@ -158,7 +215,10 @@ export default function AddStudioForm() {
           <span className="label-text">Amenities</span>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {AMENITIES.map((a) => (
-              <label key={a} className="label cursor-pointer justify-start gap-2">
+              <label
+                key={a}
+                className="label cursor-pointer justify-start gap-2"
+              >
                 <input
                   type="checkbox"
                   className="checkbox checkbox-primary checkbox-sm"
@@ -182,15 +242,28 @@ export default function AddStudioForm() {
               placeholder="Add your own amenity"
               className={field}
             />
-            <button type="button" onClick={addCustom} className="btn btn-outline">Add</button>
+            <button
+              type="button"
+              onClick={addCustom}
+              className="btn btn-outline"
+            >
+              Add
+            </button>
           </div>
           {amenities.filter((a) => !AMENITIES.includes(a)).length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {amenities.filter((a) => !AMENITIES.includes(a)).map((a) => (
-                <button key={a} type="button" onClick={() => toggleAmenity(a)} className="badge badge-primary gap-1">
-                  {a} ✕
-                </button>
-              ))}
+              {amenities
+                .filter((a) => !AMENITIES.includes(a))
+                .map((a) => (
+                  <button
+                    key={a}
+                    type="button"
+                    onClick={() => toggleAmenity(a)}
+                    className="badge badge-primary gap-1"
+                  >
+                    {a} ✕
+                  </button>
+                ))}
             </div>
           )}
         </div>
@@ -209,16 +282,32 @@ export default function AddStudioForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="form-control">
             <span className="label-text mb-1">Host name</span>
-            <input value={user?.name ?? ""} readOnly className={`${field} opacity-70`} />
+            <input
+              value={user?.name ?? ""}
+              readOnly
+              className={`${field} opacity-70`}
+            />
           </label>
           <label className="form-control">
             <span className="label-text mb-1">Host email</span>
-            <input value={user?.email ?? ""} readOnly className={`${field} opacity-70`} />
+            <input
+              value={user?.email ?? ""}
+              readOnly
+              className={`${field} opacity-70`}
+            />
           </label>
         </div>
 
-        <button type="submit" disabled={saving || uploading || !user} className="btn btn-primary w-full">
-          {saving ? <span className="loading loading-spinner loading-sm" /> : "Add Studio"}
+        <button
+          type="submit"
+          disabled={saving || uploading || !user}
+          className="btn btn-primary w-full"
+        >
+          {saving ? (
+            <span className="loading loading-spinner loading-sm" />
+          ) : (
+            "Add Studio"
+          )}
         </button>
       </div>
     </form>
