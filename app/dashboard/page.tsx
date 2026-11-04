@@ -2,14 +2,15 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { API_URL } from "@/lib/constants";
 import type { Booking, Studio } from "@/lib/types";
+import { serverFetch } from "@/lib/api-server";
 
 export const metadata = { title: "Dashboard | StudioSpace" };
 
 async function getList<T>(path: string): Promise<T[]> {
   try {
-    const res = await fetch(`${API_URL}${path}`, { cache: "no-store" });
+    // ✅ serverFetch ব্যবহার করা হয়েছে
+    const res = await serverFetch(path);
     return res.ok ? res.json() : [];
   } catch {
     return [];
@@ -19,11 +20,13 @@ async function getList<T>(path: string): Promise<T[]> {
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/login?callbackUrl=/dashboard");
-  const email = encodeURIComponent(session.user.email);
+  
+  // ✅ email এনকোড করার লাইনটা বাদ দেওয়া হয়েছে
 
   const [studios, bookings] = await Promise.all([
-    getList<Studio>(`/api/my-studios?email=${email}`),
-    getList<Booking>(`/api/my-bookings?email=${email}`),
+    // ✅ path থেকে ?email=... বাদ দেওয়া হয়েছে
+    getList<Studio>("/api/my-studios"),
+    getList<Booking>("/api/my-bookings"),
   ]);
   const pending = bookings.filter((b) => b.status === "Pending").length;
 

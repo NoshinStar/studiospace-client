@@ -1,12 +1,11 @@
-
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { API_URL } from "@/lib/constants";
 import type { Studio } from "@/lib/types";
 import DeleteStudioButton from "./DeleteStudioButton";
+import { serverFetch } from "@/lib/api-server";
 
 export const metadata = {
   title: "My Studio Listings | StudioSpace",
@@ -14,20 +13,9 @@ export const metadata = {
 
 async function getMyStudios(): Promise<Studio[] | null> {
   try {
-    const requestHeaders = await headers();
-
-    const { token } = await auth.api.getToken({
-      headers: requestHeaders,
-    });
-
-    if (!token) return null;
-
-    const res = await fetch(`${API_URL}/api/my-studios`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    });
+    // serverFetch নিজেই auth থেকে token নিয়ে নেয়, তাই এখানে আলাদা করে 
+    // token বের করার দরকার নেই। তবে তুমি চাইলে চেকটা রেখে দিতে পারো।
+    const res = await serverFetch("/api/my-studios");
 
     if (!res.ok) return null;
 
@@ -59,14 +47,14 @@ export default async function MyListingsPage() {
           </h1>
         </div>
 
+        {/* এখানে ডুপ্লিকেট বাটনগুলো ঠিক করা হয়েছে */}
         <div className="flex flex-wrap gap-2">
           <Link href="/host-requests" className="btn btn-outline btn-primary">
             Booking Requests
           </Link>
-            <div className="flex flex-wrap gap-2">
-            <Link href="/host-requests" className="btn btn-outline btn-primary">Booking Requests</Link>
-            <Link href="/add-studio" className="btn btn-primary">Add New Studio</Link>
-        </div>
+          <Link href="/add-studio" className="btn btn-primary">
+            Add New Studio
+          </Link>
         </div>
       </div>
 

@@ -2,21 +2,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { API_URL } from "@/lib/constants";
+import { clientFetch } from "@/lib/api-client"; // ✅ clientFetch ইমপোর্ট করো
 
 type Status = "Pending" | "Confirmed" | "Completed" | "Cancelled";
 
-export default function HostActions({ id, email, status }: { id: string; email: string; status: Status }) {
+// ✅ প্রপস থেকে email সরিয়ে দাও
+export default function HostActions({ id, status }: { id: string; status: Status }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
   const update = async (next: "Confirmed" | "Cancelled" | "Completed", okMsg: string) => {
     setBusy(true);
     try {
-      const res = await fetch(`${API_URL}/api/bookings/${id}/status`, {
+      // ✅ fetch-এর বদলে clientFetch ব্যবহার করো
+      const res = await clientFetch(`/api/bookings/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, status: next }),
+        body: JSON.stringify({ status: next }), // ✅ body থেকে email বাদ দাও
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Update failed.");

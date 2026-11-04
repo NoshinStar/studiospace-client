@@ -7,10 +7,8 @@ import { clientFetch } from "@/lib/api-client";
 
 export default function CancelBookingButton({
   bookingId,
-  userEmail,
 }: {
   bookingId: string;
-  userEmail: string;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);

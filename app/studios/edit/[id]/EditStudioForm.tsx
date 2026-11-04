@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { API_URL, AMENITIES, CATEGORIES } from "@/lib/constants";
+import { AMENITIES, CATEGORIES } from "@/lib/constants";
 import { uploadToImgbb } from "@/lib/imgbb";
 import { clientFetch } from "@/lib/api-client";
 import type { Studio } from "@/lib/types";
@@ -67,7 +67,7 @@ export default function EditStudioForm({ studio }: { studio: Studio }) {
 
     setSaving(true);
     try {
-        const res = await clientFetch(`/api/studios/${studio._id}`, {
+      const res = await clientFetch(`/api/studios/${studio._id}`, {
         method: "PUT",
         body: JSON.stringify(payload),
       });

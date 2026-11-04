@@ -1,13 +1,12 @@
-
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { clientFetch } from "@/lib/api-client";
 import { fmt12, fmtDate } from "@/lib/format";
 import type { Booking } from "@/lib/types";
 import CancelBookingButton from "./CancelBookingButton";
+import { serverFetch } from "@/lib/api-server";
 
 export default async function MyBookingsPage() {
   const session = await auth.api.getSession({
@@ -20,18 +19,19 @@ export default async function MyBookingsPage() {
 
   let bookings: Booking[] = [];
 
-try {
-  const response = await clientFetch("/api/my-bookings", {
-    cache: "no-store",
-  });
+  try {
+    // ✅ clientFetch এর জায়গায় serverFetch ব্যবহার করো
+    const response = await serverFetch("/api/my-bookings", {
+      cache: "no-store",
+    });
 
-  if (response.ok) {
-    const data = await response.json();
-    bookings = Array.isArray(data) ? data : data.bookings ?? [];
+    if (response.ok) {
+      const data = await response.json();
+      bookings = Array.isArray(data) ? data : data.bookings ?? [];
+    }
+  } catch (error) {
+    console.error("Failed to load bookings:", error);
   }
-} catch (error) {
-  console.error("Failed to load bookings:", error);
-}
 
   return (
     <main className="min-h-screen bg-base-200 px-4 py-12">
@@ -113,7 +113,7 @@ try {
                       {booking.status === "Pending" && (
                         <CancelBookingButton
                           bookingId={booking._id}
-                          userEmail={session.user.email}
+                          // ❌ userEmail={session.user.email} -> এটি সরিয়ে দাও
                         />
                       )}
                     </div>

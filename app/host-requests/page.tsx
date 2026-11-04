@@ -2,10 +2,10 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { API_URL } from "@/lib/constants";
 import { fmt12, fmtDate } from "@/lib/format";
 import type { Booking } from "@/lib/types";
 import HostActions from "./HostActions";
+import { serverFetch } from "@/lib/api-server";
 
 export const metadata = { title: "Booking Requests | StudioSpace" };
 
@@ -16,11 +16,10 @@ const badge: Record<Booking["status"], string> = {
   Cancelled: "badge-error",
 };
 
-async function getRequests(email: string): Promise<Booking[] | null> {
+async function getRequests(): Promise<Booking[] | null> {
   try {
-    const res = await fetch(`${API_URL}/api/host-bookings?email=${encodeURIComponent(email)}`, {
-      cache: "no-store",
-    });
+    // ✅ serverFetch ব্যবহার করা হয়েছে, API_URL বাদ দেওয়া হয়েছে
+    const res = await serverFetch("/api/host-bookings");
     return res.ok ? res.json() : null;
   } catch {
     return null;
@@ -30,7 +29,9 @@ async function getRequests(email: string): Promise<Booking[] | null> {
 export default async function HostRequestsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/login?callbackUrl=/host-requests");
-  const requests = await getRequests(session.user.email);
+  
+  // ✅ এখান থেকে session.user.email বাদ দেওয়া হয়েছে
+  const requests = await getRequests();
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
@@ -78,7 +79,8 @@ export default async function HostRequestsPage() {
                     <td>${b.totalPrice}</td>
                     <td><span className={`badge ${badge[b.status]}`}>{b.status}</span></td>
                     <td>
-                      <HostActions id={b._id} email={session.user.email} status={b.status} />
+                      {/* ✅ email={session.user.email} সরিয়ে দেওয়া হয়েছে */}
+                      <HostActions id={b._id} status={b.status} />
                     </td>
                   </tr>
                 ))}
