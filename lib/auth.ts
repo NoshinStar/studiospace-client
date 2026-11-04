@@ -1,3 +1,4 @@
+
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { nextCookies } from "better-auth/next-js";
@@ -6,6 +7,11 @@ import { jwt } from "better-auth/plugins";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
+
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://studiospace-client-theta.vercel.app",
+  ],
 
   emailAndPassword: {
     enabled: true,
@@ -20,5 +26,5 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [jwt(), nextCookies()], // nextCookies সবসময় শেষে
+  plugins: [jwt(), nextCookies()],
 });
