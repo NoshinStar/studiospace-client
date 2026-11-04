@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudioSpace
 
-## Getting Started
+StudioSpace is a peer-to-peer creative workspace marketplace where creators can discover, list, and book photo studios, podcast lounges, music suites, and film stages by the hour.
 
-First, run the development server:
+**Live Site:** https://studiospace-client-theta.vercel.app
+**Server API:** https://studiospace-server-indol.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
+- Discover and filter studios by category, price, and rating.
+- Secure authentication using BetterAuth (Email/Password and Google Login).
+- JWT-protected API routes for creating, updating, and deleting studios.
+- Seamless booking system with double-booking prevention for confirmed slots.
+- Host Dashboard to manage listings and confirm/reject booking requests.
+- Fully responsive UI with Dark/Light theme toggle, custom modals, and toast notifications.
+- imgbb integration for smooth image uploading.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
+- **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS, DaisyUI, Swiper, Sonner.
+- **Backend:** Node.js, Express.js, MongoDB.
+- **Authentication:** BetterAuth, JWT.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local Setup
+1. Clone both client and server repositories.
+2. Run `npm install` in both folders.
+3. Set up the `.env.local` in the client with your `MONGODB_URI`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NEXT_PUBLIC_API_URL`.
+4. Run `npm run dev` in the server first, then in the client.
+5. Open `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Examiner Test Credentials
+You can use the following accounts to test the platform:
+- **Host Account:**
+  - Email: `examiner@studiospace.com`
+  - Password: `12345678eM`
+- **Guest Account:**
+  - Email: `noshin@gmail.com`
+  - Password: `12345678eM` 
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**How to Test:**
+1. Log in as Guest and book any studio.
+2. Log out and log in as Host (Examiner).
+3. Go to "My Studio Listings" or "Booking Requests" to manage the booking and studios.
