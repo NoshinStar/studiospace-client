@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { API_URL } from "@/lib/constants";
 import { clientFetch } from "@/lib/api-client";
 
 export default function DeleteStudioButton({

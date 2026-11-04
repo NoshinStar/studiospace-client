@@ -12,17 +12,28 @@ export const metadata = {
   title: "My Studio Listings | StudioSpace",
 };
 
-async function getMyStudios(email: string): Promise<Studio[] | null> {
+async function getMyStudios(): Promise<Studio[] | null> {
   try {
-    const res = await fetch(
-      `${API_URL}/api/my-studios?email=${encodeURIComponent(email)}`,
-      { cache: "no-store" }
-    );
+    const requestHeaders = await headers();
+
+    const { token } = await auth.api.getToken({
+      headers: requestHeaders,
+    });
+
+    if (!token) return null;
+
+    const res = await fetch(`${API_URL}/api/my-studios`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
 
     if (!res.ok) return null;
 
     return res.json();
-  } catch {
+  } catch (error) {
+    console.error("Failed to load my studios:", error);
     return null;
   }
 }
@@ -36,7 +47,7 @@ export default async function MyListingsPage() {
     redirect("/login?callbackUrl=/my-listings");
   }
 
-  const studios = await getMyStudios(session.user.email);
+  const studios = await getMyStudios();
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
@@ -48,9 +59,15 @@ export default async function MyListingsPage() {
           </h1>
         </div>
 
-        <Link href="/add-studio" className="btn btn-primary">
-          Add New Studio
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/host-requests" className="btn btn-outline btn-primary">
+            Booking Requests
+          </Link>
+            <div className="flex flex-wrap gap-2">
+            <Link href="/host-requests" className="btn btn-outline btn-primary">Booking Requests</Link>
+            <Link href="/add-studio" className="btn btn-primary">Add New Studio</Link>
+        </div>
+        </div>
       </div>
 
       <div className="mt-10">

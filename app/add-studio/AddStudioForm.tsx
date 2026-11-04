@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { API_URL, AMENITIES, CATEGORIES } from "@/lib/constants";
+import { AMENITIES, CATEGORIES } from "@/lib/constants";
 import { clientFetch } from "@/lib/api-client";
 
 export default function AddStudioForm() {

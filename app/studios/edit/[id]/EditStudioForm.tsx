@@ -1,9 +1,11 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { API_URL, AMENITIES, CATEGORIES } from "@/lib/constants";
 import { uploadToImgbb } from "@/lib/imgbb";
+import { clientFetch } from "@/lib/api-client";
 import type { Studio } from "@/lib/types";
 
 export default function EditStudioForm({ studio }: { studio: Studio }) {
@@ -65,9 +67,8 @@ export default function EditStudioForm({ studio }: { studio: Studio }) {
 
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/studios/${studio._id}`, {
+        const res = await clientFetch(`/api/studios/${studio._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();

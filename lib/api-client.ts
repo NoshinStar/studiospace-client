@@ -1,4 +1,3 @@
-
 import { authClient } from "./auth-client";
 import { API_URL } from "./constants";
 
@@ -12,7 +11,6 @@ export async function clientFetch(
     ...init,
     headers: {
       "Content-Type": "application/json",
-      ...init.headers,
       ...(data?.token
         ? { Authorization: `Bearer ${data.token}` }
         : {}),

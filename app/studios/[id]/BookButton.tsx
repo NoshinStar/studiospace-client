@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { API_URL } from "@/lib/constants";
 import { clientFetch } from "@/lib/api-client";
 
 type StudioInfo = {
@@ -68,23 +67,23 @@ export default function BookButton({
     setLoading(true);
 
     try {
-      const response = await clientFetch("/api/bookings", {
-        method: "POST",
-        body: JSON.stringify({
-          studioId: studio._id,
-          userEmail: session.user.email,
-          userName: session.user.name,
-          date,
-          startTime,
-          hours,
-        }),
-      });
+  const safeHours = hours;
 
-      const result = await response.json();
+  const res = await clientFetch("/api/bookings", {
+    method: "POST",
+    body: JSON.stringify({
+      studioId: studio._id,
+      date,
+      startTime,
+      hours: safeHours,
+    }),
+  });
 
-      if (!response.ok) {
-        throw new Error(result.message || "Booking failed.");
-      }
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Booking failed.");
+  }
 
       toast.success("Booking created successfully!");
       setIsOpen(false);
@@ -179,7 +178,7 @@ export default function BookButton({
             <div className="mb-5 space-y-2 rounded-xl bg-base-200 p-4">
               <div className="flex justify-between">
                 <span>Hourly rate</span>
-                <span>৳{studio.hourlyRate}</span>
+                <span>${studio.hourlyRate}</span>
               </div>
               <div className="flex justify-between">
                 <span>Duration</span>
@@ -193,12 +192,12 @@ export default function BookButton({
               </div>
               <div className="flex justify-between">
                 <span>Security deposit (refundable)</span>
-                <span>৳{studio.securityDeposit}</span>
+                <span>${studio.securityDeposit}</span>
               </div>
               <div className="divider my-1" />
               <div className="flex justify-between font-bold">
                 <span>Booking total</span>
-                <span>৳{totalPrice}</span>
+                <span>${totalPrice}</span>
               </div>
             </div>
 
