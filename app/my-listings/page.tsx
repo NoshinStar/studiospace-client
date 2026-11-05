@@ -48,10 +48,12 @@ export default async function MyListingsPage() {
         </div>
 
         {/* এখানে ডুপ্লিকেট বাটনগুলো ঠিক করা হয়েছে */}
-        <div className="flex flex-wrap gap-2">
-          <Link href="/host-requests" className="btn btn-outline btn-primary">
-            Booking Requests
-          </Link>
+                <div className="flex flex-wrap gap-2">
+          {studios && studios.length > 0 && (
+            <Link href="/host-requests" className="btn btn-outline btn-primary">
+              Booking Requests
+            </Link>
+          )}
           <Link href="/add-studio" className="btn btn-primary">
             Add New Studio
           </Link>
